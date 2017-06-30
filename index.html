@@ -1,0 +1,149 @@
+<html id = "main"  style = "background-color: #6e9b8c">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<script src = "https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+
+<div class = "container">
+
+  <div class="jumbotron">
+    <h1 class="display-3">Buy ENS Domains!</h1>
+
+    <br />      <br />
+    <p class="lead">This is a simple and easy to use ENS buyer. Just search for the domain name you want, if it's available you can purchase it
+      by sending the correct amount of ETH to the below contract address.
+      Your ENS will automatically be transferred to you within a few minutes of receiving the ETH.
+      <br /><br />
+      Our contract address is: <strong>0x7C203685291149D5dAd4308781F42A6B945dF4E1</strong><br />
+      Please make sure to send the correct amount of ETH displayed in the price. If you send too much or too little, the transaction will fail and your ETH will be refunded.
+    </p>
+    <hr class="my-4">
+
+
+    <div class="input-group">
+      <input type="text" class="form-control" id = "domain" placeholder=""aria-describedby="basic-addon2">
+      <span class="input-group-addon" id="basic-addon2">.eth</span>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" role="alert" id = "length" style = "display: none">
+    Your ENS domain must be at least 7 characters in length.
+  </div>
+
+  <div class="alert alert-danger" role="alert" id = "chars" style = "display: none">
+    <strong>Oops! </strong>Your ENS domain can only contain letters and numbers.
+  </div>
+
+  <div id = "available" style="display: none">
+    <div class="alert alert-success" role="alert" >
+      <strong>Hooray!</strong> This domain name is available. <br /> </div>
+      <!-- <button type="button" class="btn btn-secondary btn-lg">Buy!</button> <br /> <br /> -->
+      <h3 id = "price"></h3>
+      <br /><br />
+
+    </div>
+
+    <div class="alert alert-danger" role="alert" id = "notAvailable" style="display: none">
+      <strong>Crap!</strong> This domain name isn't available. It is either reserved or owned by someone else. Try searching for another one.
+    </div>
+
+    <h3 style = "display: none" id = "searching">Searching...</h3>
+
+
+
+  </div>
+
+  <script>
+
+  $(document).ready(function(){
+
+    function hashCode (str){
+      var hash = 0;
+      if (str.length == 0) return hash;
+      for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return hash;
+    }
+
+    var domainName;
+    var available;
+
+    $('#domain').on('input', function(){
+      domainName = document.getElementById('domain').value.replace('.eth', "").trim();
+
+      if(domainName == ''){
+        $('#available').hide();
+        $('#notAvailable').hide();
+        $('#length').hide();
+        $('#chars').hide();
+      }
+
+      var showWarning = domainName.length >= 7 || domainName == "";
+      var validName = domainName.match(/^[0-9a-zA-Z]+$/) !== null;
+      // var calcHash = validName && domainName.length >= 7 && domainName !== "";
+
+      if(domainName.length < 7 && domainName !== ''){
+        $('#length').show();
+        $('#available').hide();
+        $('#notAvailable').hide();
+        $('#chars').hide();
+      }
+
+      if(domainName.length >= 7 &&  !validName){
+        $('#length').hide();
+        $('#available').hide();
+        $('#notAvailable').hide();
+        $('#chars').show();
+      }
+
+      var calcHash = validName && domainName.length >= 7 && domainName !== "";
+
+      setTimeout(function(){
+
+        if(calcHash){
+          var hash = hashCode(domainName);
+          console.log(hash);
+          available = hash/10 < 5;
+
+          if(available){
+            var price = _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3);
+            $('#notAvailable').hide();
+            $('#available').show();
+            $('#price').html("Price: " + price + " ETH");
+          }
+
+          else{
+            $('#notAvailable').show();
+            $('#available').hide();
+          }
+
+          $('#searching').hide();
+
+        }
+
+      }, 1500);
+
+      if(calcHash){
+        $('#searching').show();
+        $('#available').hide();
+        $('#length').hide();
+        $('#chars').hide();
+        $('#notAvailable').hide();
+      }
+
+    })
+
+  });
+
+
+  </script>
+
+
+  </html>
