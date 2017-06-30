@@ -72,7 +72,12 @@
           <th>Price</th>
         </tr>
       </thead>
+
+      <tbody id = 'body'></tbody>
+
     </table>
+
+    <br /><br /><br />
 
   </div>
 
@@ -97,7 +102,7 @@
       var domain = faker.internet.domainName().split('.')[0];
       if(domain.length >= 7){
         var hash = hashCode(domain);
-        if(!hash/10 < 5){
+        if(hash%10 >= 5){
           recent.push({
             domain: domain + '.eth',
             buyer: _.sample(bz),
@@ -117,7 +122,7 @@
       var buyer = '<td>' + a.buyer + '</td>';
       var price = '<td>' + a.price + '</td>';
       var row = '<tr>' + n + domain + buyer + price + '</tr>';
-      $('#recent').append(row);
+      $('#body').append(row);
     });
 
     var domainName;
@@ -157,7 +162,7 @@
         if(calcHash){
           var hash = hashCode(domainName);
           console.log(hash);
-          available = hash/10 < 5;
+          available = hash%10 < 5;
 
           if(available){
             var price = _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5, 2);
