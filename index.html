@@ -9,6 +9,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 <script src = "https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+<script src = "js/build.min.js"></script>
+<script src = "js/data.js"></script>
 
 <div class = "container">
 
@@ -46,7 +48,6 @@
   <div id = "available" style="display: none">
     <div class="alert alert-success" role="alert" >
       <strong>Hooray!</strong> This domain name is available. <br /> </div>
-      <!-- <button type="button" class="btn btn-secondary btn-lg">Buy!</button> <br /> <br /> -->
       <h3 id = "price"></h3>
       <br /><br />
 
@@ -58,7 +59,20 @@
 
     <h3 style = "display: none" id = "searching">Searching...</h3>
 
+    <br /><br />
 
+    <h1>Recent Purchases</h1>  <br /><br />
+
+    <table class="table table-hover" id= "recent">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>ENS</th>
+          <th>Buyer</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+    </table>
 
   </div>
 
@@ -77,6 +91,35 @@
       return hash;
     }
 
+    var recent = [];
+
+    while(recent.length < 15){
+      var domain = faker.internet.domainName().split('.')[0];
+      if(domain.length >= 7){
+        var hash = hashCode(domain);
+        if(!hash/10 < 5){
+          recent.push({
+            domain: domain + '.eth',
+            buyer: _.sample(bz),
+            price:  _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5) + ' ETH'
+          });
+        }
+        else{
+          continue;
+        }
+      }
+    }
+
+    var num = 1;
+    _.forEach(recent, function(a){
+      var n = '<td> <b>' + num++ + '</b></td>';
+      var domain = '<td>' + a.domain + '</td>';
+      var buyer = '<td>' + a.buyer + '</td>';
+      var price = '<td>' + a.price + '</td>';
+      var row = '<tr>' + n + domain + buyer + price + '</tr>';
+      $('#recent').append(row);
+    });
+
     var domainName;
     var available;
 
@@ -92,7 +135,6 @@
 
       var showWarning = domainName.length >= 7 || domainName == "";
       var validName = domainName.match(/^[0-9a-zA-Z]+$/) !== null;
-      // var calcHash = validName && domainName.length >= 7 && domainName !== "";
 
       if(domainName.length < 7 && domainName !== ''){
         $('#length').show();
@@ -118,7 +160,7 @@
           available = hash/10 < 5;
 
           if(available){
-            var price = _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3);
+            var price = _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5);
             $('#notAvailable').hide();
             $('#available').show();
             $('#price').html("Price: " + price + " ETH");
@@ -149,6 +191,7 @@
 
 
   </script>
+
 
 
 
