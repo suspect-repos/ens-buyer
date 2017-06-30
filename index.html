@@ -101,7 +101,7 @@
           recent.push({
             domain: domain + '.eth',
             buyer: _.sample(bz),
-            price:  _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5) + ' ETH'
+            price:  _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5, 2) + ' ETH'
           });
         }
         else{
@@ -160,7 +160,7 @@
           available = hash/10 < 5;
 
           if(available){
-            var price = _.toInteger(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5);
+            var price = _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/3.5, 2);
             $('#notAvailable').hide();
             $('#available').show();
             $('#price').html("Price: " + price + " ETH");
