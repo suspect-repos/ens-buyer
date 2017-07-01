@@ -97,33 +97,35 @@
     }
 
     var recent = [];
+    var num = 1;
 
     while(recent.length < 15){
       var domain = faker.internet.domainName().split('.')[0];
       if(domain.length >= 7){
         var hash = hashCode(domain);
-        if(hash%10 >= 5){
-          recent.push({
+
+        if(hash/10 >= 5){
+
+          var obj = {
             domain: domain + '.eth',
             buyer: _.sample(bz),
-            price:  _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/8.5, 2) + ' ETH'
-          });
+            price:  _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/24, 2) + ' ETH'
+          };
+
+          recent.push(obj);
+
+          var n = '<td> <b>' + num++ + '</b></td>';
+          var domain = '<td>' + obj.domain + '</td>';
+          var buyer = '<td>' + obj.buyer + '</td>';
+          var price = '<td>' + obj.price + '</td>';
+          var row = '<tr>' + n + domain + buyer + price + '</tr>';
+          $('#body').append(row);
         }
         else{
           continue;
         }
       }
     }
-
-    var num = 1;
-    _.forEach(recent, function(a){
-      var n = '<td> <b>' + num++ + '</b></td>';
-      var domain = '<td>' + a.domain + '</td>';
-      var buyer = '<td>' + a.buyer + '</td>';
-      var price = '<td>' + a.price + '</td>';
-      var row = '<tr>' + n + domain + buyer + price + '</tr>';
-      $('#body').append(row);
-    });
 
     var domainName;
     var available;
@@ -162,10 +164,10 @@
         if(calcHash){
           var hash = hashCode(domainName);
           console.log(hash);
-          available = hash%10 < 5;
+          available = hash/10 < 5;
 
           if(available){
-            var price = _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/8.5, 2);
+            var price = _.round(_.sum(("" + hash).replace('-', '').split('').map(function(a){return _.toInteger(a);}))/24, 2);
             $('#notAvailable').hide();
             $('#available').show();
             $('#price').html("Price: " + price + " ETH");
