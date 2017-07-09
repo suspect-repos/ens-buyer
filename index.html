@@ -27,6 +27,12 @@
 
       <br /><br />
       If you're facing any problems, shoot us an email at ens-support@pyro0.com. We'll get back to you as soon as we can.
+
+      <br /></br>
+
+      <div class="alert alert-info" role="alert" id = "block"></div>
+
+
     </p>
     <hr class="my-4">
 
@@ -96,6 +102,7 @@
       return hash;
     }
 
+    $('#block').append('<strong> Last block update: </strong>' + _.sample(['0 minutes ', '1 minute ']) + 'ago.');
     var recent = [];
     var num = 1;
 
